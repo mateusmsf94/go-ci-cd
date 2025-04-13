@@ -1,24 +1,17 @@
-# This is a basic workflow to help you get started with Actions
+name: Verify file
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events for main
   push:
-    
-defaults:
-  run:
-    shell: bash
-    working-directory: workdir
+  pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-lastest
-    defaults: 
-      run:
-        shell: sh
-        working-directory: test
+  vefify:
+    name: ${{ vars.JOB_NAME }}
+    if: ${{ vars.EXEC_WF == 'true'}}
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - run: echo "in test"
+      - run: |
+          [[ -f ${{ vars.FILE_TO_CHECK }} ]] || ( echo "${{ vars.FILE_TO_CHECK }} file needs to be added to ${{ github.repository }} !" && exit 1 )
+
